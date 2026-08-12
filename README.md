@@ -6,6 +6,12 @@
 
 The system is built using Spring Boot 4.x with Spring AI 2.x, implementing a Retrieval-Augmented Generation (RAG) pattern. The architecture follows a layered design:
 
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="./assets/1-dark.svg">
+  <source media="(prefers-color-scheme: light)" srcset="./1-light.svg">
+  <img alt="ci-cd-flow" src="./assets/ci-cd-light.svg">
+</picture>
+
 **Presentation Layer**
 - REST controllers (`ChatController`, `DocumentController`)
 - SSE streaming endpoints for real-time responses
