@@ -1,0 +1,66 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: pgvector/pgvector:pg16
+    container_name: rag-postgres
+    environment:
+      POSTGRES_DB: ragdb
+      POSTGRES_USER: raguser
+      POSTGRES_PASSWORD: ragpass
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U raguser -d ragdb"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - rag-network
+
+  rag-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: rag-app
+    environment:
+      # Database Configuration
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: ragdb
+      DB_USER: raguser
+      DB_PASSWORD: ragpass
+      
+      # Gemini AI Configuration
+      GEMINI_API_KEY: ${GEMINI_API_KEY}
+      GEMINI_MODEL: ${GEMINI_MODEL:gemini-3.5-flash-lite}
+      GEMINI_EMBEDDING_MODEL: ${GEMINI_EMBEDDING_MODEL:-text-embedding-004}
+      
+      # OCR.space API Configuration
+      OCR_API_KEY: ${OCR_API_KEY}
+      
+      # JVM Options - Increased heap for document processing
+      JAVA_OPTS: -Xms1g -Xmx3g -XX:+UseContainerSupport -XX:MaxDirectMemorySize=512m -XX:+UseG1GC -XX:MaxGCPauseMillis=200
+      
+      # RAG Configuration
+      RAG_BATCH_SIZE: 3
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - rag-network
+    mem_limit: 4g
+    mem_reservation: 1g
+    restart: unless-stopped
+
+networks:
+  rag-network:
+    driver: bridge
+
+volumes:
+  postgres-data:
+

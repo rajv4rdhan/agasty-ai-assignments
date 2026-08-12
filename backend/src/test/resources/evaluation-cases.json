@@ -1,0 +1,87 @@
+[
+  {
+    "id": "direct-factual-1",
+    "category": "direct-factual",
+    "tenantId": "school-tenant",
+    "question": "What is the late submission fee?",
+    "expectedBehavior": "answer",
+    "expectedSource": "Fee Structure 2024",
+    "expectedAnswerKeywords": ["late", "fee", "10%", "penalty"],
+    "description": "Direct factual question from document"
+  },
+  {
+    "id": "multi-hop-1",
+    "category": "multi-hop",
+    "tenantId": "school-tenant",
+    "question": "If I submit my Term 2 fee 15 days late, how much extra will I pay?",
+    "expectedBehavior": "answer",
+    "expectedSource": "Fee Structure 2024",
+    "expectedAnswerKeywords": ["late", "fee", "penalty", "15", "days"],
+    "description": "Multi-hop requiring multiple pieces of information"
+  },
+  {
+    "id": "follow-up-1",
+    "category": "follow-up",
+    "tenantId": "school-tenant",
+    "conversationId": "previous",
+    "previousQuestion": "What is the transport fee for class 8?",
+    "question": "What about class 9?",
+    "expectedBehavior": "answer",
+    "expectedSource": "Transport Fee Schedule",
+    "expectedAnswerKeywords": ["class 9", "transport", "fee"],
+    "description": "Follow-up question requiring context"
+  },
+  {
+    "id": "category-filtered-1",
+    "category": "category-filtered",
+    "tenantId": "school-tenant",
+    "question": "What are the rules for student behavior?",
+    "categoryFilter": "policies",
+    "expectedBehavior": "answer",
+    "expectedSource": "Student Handbook",
+    "expectedAnswerKeywords": ["behavior", "rules", "conduct"],
+    "description": "Question filtered by specific category"
+  },
+  {
+    "id": "out-of-scope-1",
+    "category": "out-of-scope",
+    "tenantId": "school-tenant",
+    "question": "What is the capital of France?",
+    "expectedBehavior": "refuse",
+    "expectedSource": null,
+    "expectedAnswerKeywords": ["don't have", "information", "documents"],
+    "description": "Question completely unrelated to school documents"
+  },
+  {
+    "id": "near-miss-1",
+    "category": "near-miss",
+    "tenantId": "school-tenant",
+    "question": "What is the university admission process?",
+    "expectedBehavior": "refuse",
+    "expectedSource": null,
+    "expectedAnswerKeywords": ["don't have", "information"],
+    "description": "Related topic but not in documents"
+  },
+  {
+    "id": "deleted-document-1",
+    "category": "deleted-document",
+    "tenantId": "school-tenant",
+    "question": "What is in the old policy document?",
+    "documentToDelete": "Old Policy 2020",
+    "expectedBehavior": "refuse",
+    "expectedSource": null,
+    "expectedAnswerKeywords": ["don't have", "information"],
+    "description": "Question about deleted document should refuse"
+  },
+  {
+    "id": "cross-tenant-1",
+    "category": "cross-tenant",
+    "tenantId": "school-tenant-a",
+    "otherTenantId": "school-tenant-b",
+    "question": "What are the admission requirements?",
+    "expectedBehavior": "answer",
+    "expectedSource": "Admission Guide",
+    "expectedAnswerKeywords": ["admission", "requirements"],
+    "description": "Verify tenant A cannot see tenant B's documents"
+  }
+]

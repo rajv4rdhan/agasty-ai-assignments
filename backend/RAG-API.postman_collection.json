@@ -1,0 +1,616 @@
+{
+	"info": {
+		"_postman_id": "rag-backend-api-collection",
+		"name": "RAG Backend API",
+		"description": "Complete API collection for RAG Backend System with document management, chat, and streaming endpoints",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:8080",
+			"type": "string"
+		},
+		{
+			"key": "tenantId",
+			"value": "school-tenant",
+			"type": "string"
+		},
+		{
+			"key": "conversationId",
+			"value": "1",
+			"type": "string"
+		},
+		{
+			"key": "documentId",
+			"value": "1",
+			"type": "string"
+		}
+	],
+	"item": [
+		{
+			"name": "Document Management",
+			"item": [
+				{
+					"name": "Upload Document",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-Tenant-Id",
+								"value": "{{tenantId}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file",
+									"src": []
+								},
+								{
+									"key": "category",
+									"value": "finance",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/documents/upload",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"documents",
+								"upload"
+							]
+						},
+						"description": "Upload a document (PDF, DOCX, TXT, Markdown). The document will be processed asynchronously - chunked and embedded."
+					},
+					"response": []
+				},
+				{
+					"name": "List All Documents",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-Tenant-Id",
+								"value": "{{tenantId}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/documents",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"documents"
+							]
+						},
+						"description": "List all documents for the tenant. Results are ordered by creation date (newest first)."
+					},
+					"response": []
+				},
+				{
+					"name": "List Documents by Category",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-Tenant-Id",
+								"value": "{{tenantId}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/documents?category=finance",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"documents"
+							],
+							"query": [
+								{
+									"key": "category",
+									"value": "finance"
+								}
+							]
+						},
+						"description": "List documents filtered by category."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Document Details",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-Tenant-Id",
+								"value": "{{tenantId}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/documents/{{documentId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"documents",
+								"{{documentId}}"
+							]
+						},
+						"description": "Get details of a specific document including status, file info, and metadata."
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Document",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "X-Tenant-Id",
+								"value": "{{tenantId}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/documents/{{documentId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"documents",
+								"{{documentId}}"
+							]
+						},
+						"description": "Delete a document and all associated data (chunks, citations). This is a cascading delete operation."
+					},
+					"response": []
+				}
+			],
+			"description": "Document upload, listing, and deletion operations"
+		},
+		{
+			"name": "Chat - Standard",
+			"item": [
+				{
+					"name": "New Conversation",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "X-Tenant-Id",
+								"value": "{{tenantId}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"conversationId\": null,\n  \"message\": \"What is the late submission fee?\",\n  \"category\": null\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/chat",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"chat"
+							]
+						},
+						"description": "Start a new conversation. Set conversationId to null to create a new conversation."
+					},
+					"response": []
+				},
+				{
+					"name": "Continue Conversation",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "X-Tenant-Id",
+								"value": "{{tenantId}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"conversationId\": {{conversationId}},\n  \"message\": \"What about Term 2?\",\n  \"category\": null\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/chat",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"chat"
+							]
+						},
+						"description": "Continue an existing conversation. Provide the conversationId from previous response."
+					},
+					"response": []
+				},
+				{
+					"name": "Chat with Category Filter",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "X-Tenant-Id",
+								"value": "{{tenantId}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"conversationId\": null,\n  \"message\": \"What are the admission requirements?\",\n  \"category\": \"admissions\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/chat",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"chat"
+							]
+						},
+						"description": "Chat with document category filter. Only searches documents in the specified category."
+					},
+					"response": []
+				}
+			],
+			"description": "Standard chat endpoints using vector search"
+		},
+		{
+			"name": "Chat - Enhanced",
+			"item": [
+				{
+					"name": "Enhanced Chat - New Conversation",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "X-Tenant-Id",
+								"value": "{{tenantId}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"conversationId\": null,\n  \"message\": \"What is the transport fee?\",\n  \"category\": null\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/chat/enhanced",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"chat",
+								"enhanced"
+							]
+						},
+						"description": "Enhanced chat with hybrid search (vector + full-text), query rewriting, and reranking enabled."
+					},
+					"response": []
+				},
+				{
+					"name": "Enhanced Chat - Follow-up Question",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "X-Tenant-Id",
+								"value": "{{tenantId}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"conversationId\": {{conversationId}},\n  \"message\": \"What about class 9?\",\n  \"category\": null\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/chat/enhanced",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"chat",
+								"enhanced"
+							]
+						},
+						"description": "Demonstrates query rewriting. The follow-up question 'What about class 9?' will be rewritten to include context from conversation history."
+					},
+					"response": []
+				},
+				{
+					"name": "Enhanced Chat - Exact Term Search",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "X-Tenant-Id",
+								"value": "{{tenantId}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"conversationId\": null,\n  \"message\": \"Term 2 late fee\",\n  \"category\": \"finance\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/chat/enhanced",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"chat",
+								"enhanced"
+							]
+						},
+						"description": "Demonstrates hybrid search advantage. The exact term 'Term 2 late fee' will benefit from full-text search."
+					},
+					"response": []
+				}
+			],
+			"description": "Enhanced chat with hybrid search, query rewriting, and reranking"
+		},
+		{
+			"name": "Chat - Streaming",
+			"item": [
+				{
+					"name": "Stream Chat - New Conversation",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "text/event-stream",
+								"type": "text"
+							},
+							{
+								"key": "X-Tenant-Id",
+								"value": "{{tenantId}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"conversationId\": null,\n  \"message\": \"What are the school timings?\",\n  \"category\": null\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/chat/stream",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"chat",
+								"stream"
+							]
+						},
+						"description": "Stream chat response using Server-Sent Events (SSE). Provides real-time token-by-token streaming.\n\nSSE Events:\n- retrieval: Citations from retrieval\n- content: Individual tokens\n- done: Completion with conversationId\n- error: Error message"
+					},
+					"response": []
+				},
+				{
+					"name": "Stream Chat - Continue Conversation",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "text/event-stream",
+								"type": "text"
+							},
+							{
+								"key": "X-Tenant-Id",
+								"value": "{{tenantId}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"conversationId\": {{conversationId}},\n  \"message\": \"What about holidays?\",\n  \"category\": null\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/chat/stream",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"chat",
+								"stream"
+							]
+						},
+						"description": "Continue a conversation with streaming response."
+					},
+					"response": []
+				}
+			],
+			"description": "Server-Sent Events (SSE) streaming chat endpoints"
+		},
+		{
+			"name": "Conversation Management",
+			"item": [
+				{
+					"name": "List Conversations",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-Tenant-Id",
+								"value": "{{tenantId}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/chat/conversations",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"chat",
+								"conversations"
+							]
+						},
+						"description": "List all conversations for the tenant, ordered by last update time."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Conversation History",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-Tenant-Id",
+								"value": "{{tenantId}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/chat/conversations/{{conversationId}}/messages",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"chat",
+								"conversations",
+								"{{conversationId}}",
+								"messages"
+							]
+						},
+						"description": "Get all messages in a conversation, ordered chronologically."
+					},
+					"response": []
+				}
+			],
+			"description": "Conversation listing and history retrieval"
+		},
+		{
+			"name": "Health Check",
+			"item": [
+				{
+					"name": "Health",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/actuator/health",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"actuator",
+								"health"
+							]
+						},
+						"description": "Spring Boot Actuator health endpoint. Shows application and database health status."
+					},
+					"response": []
+				},
+				{
+					"name": "Info",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/actuator/info",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"actuator",
+								"info"
+							]
+						},
+						"description": "Application information endpoint."
+					},
+					"response": []
+				}
+			],
+			"description": "Application health and status endpoints"
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}
